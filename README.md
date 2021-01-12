@@ -13,6 +13,7 @@ The application should provide endpoints for creating image objects in a datasto
 
     ```
     docker build . -t rs-connect-tech-test
+
     docker run -p 8080:8080 -it rs-connect-tech-test
     ```
 

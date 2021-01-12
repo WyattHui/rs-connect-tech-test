@@ -1,11 +1,10 @@
 const
   express = require('express'),
   app = express(),
-  cors = require('cors'),
   fs = require('fs'),
   index = fs.readFileSync('./index.html', 'utf8');
 
-app.use(cors());
+app.use(require('cors')());
 
 app.get('/', (req, res) => {
   res.send(index);

@@ -9,12 +9,10 @@ The application should provide endpoints for creating image objects in a datasto
 * Node.js (https://nodejs.org)
 
 ### Development
-* Run docker
+* Run npm script
 
     ```
-    docker build . -t rs-connect-tech-test
-
-    docker run -p 8080:8080 -it rs-connect-tech-test
+    npm run dev
     ```
 
 ### Deployment instructions

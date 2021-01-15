@@ -41,6 +41,7 @@ module.exports = async (name, file) => {
         fileExtension: file.originalname.match(/.+\.(.+)/)[1],
         file
       });
+    client.close();
     return result;
   } catch (e) {
     client.close();

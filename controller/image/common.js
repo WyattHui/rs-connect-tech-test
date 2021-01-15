@@ -1,16 +1,17 @@
 const
-  DOMAIN = process.env.DOMAIN;
+  DOMAIN = process.env.DOMAIN,
+  createImageKey = doc => {
+    return `${doc.name}-${doc.width}x${doc.height}.${doc.fileExtension}`;
+  };
 
 module.exports = {
+  createImageKey,
   postHandleImage: doc => {
-    let {id, name, width, height} = doc,
-      file = doc.file || {},
-      originalname = file.originalname || '',
-      extension = originalname.split('.')[1] || 'jpg';
+    let {id, name, width, height} = doc;
 
     return {
       id, name, width, height,
-      url: `http://${DOMAIN}/${name}-${width}x${height}.${extension}`
+      url: `http://${DOMAIN}/${createImageKey(doc)}`
     };
   },
   commonImage404: res => {

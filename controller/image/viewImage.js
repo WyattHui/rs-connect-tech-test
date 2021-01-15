@@ -1,5 +1,6 @@
 const
   {getImage} = require('../../mongodb/image'),
+  {imageCache} = require('../../node-cache'),
   {
     common400
   } = require('../index'),
@@ -14,6 +15,12 @@ module.exports = async (req, res) => {
 
   if (!matches) {
     return common400(res, {message: 'Image Url is not correct'});
+  }
+
+  let doc = imageCache.get(imageUrl);
+  if (doc) {
+    let file = doc.file || {};
+    return sendImage(res, file.mimetype, file.buffer);
   }
 
   matches.shift();
@@ -35,9 +42,14 @@ module.exports = async (req, res) => {
       return commonImage404(res);
     }
     let file = doc.file || {};
-    res.contentType(file.mimetype);
-    res.end(file.buffer.value(), 'binary');
+    return sendImage(res, file.mimetype, file.buffer.value());
   } catch (e) {
     return common400(res, e);
   }
 };
+
+const
+  sendImage = (res, contentType, value) => {
+    res.contentType(contentType);
+    return res.end(value, 'binary');
+  };

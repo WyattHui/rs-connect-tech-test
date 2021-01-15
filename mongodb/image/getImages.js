@@ -10,10 +10,12 @@ module.exports = async () => {
 
   try {
     await client.connect();
-    return client.db(dbName)
+    let results = await client.db(dbName)
       .collection(collectionName)
       .find()
       .toArray();
+    client.close();
+    return results;
   } catch (e) {
     client.close();
     throw e;

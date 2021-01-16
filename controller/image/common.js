@@ -1,4 +1,5 @@
 const
+  Jimp = require('jimp'),
   DOMAIN = process.env.DOMAIN,
   createImageKey = doc => {
     return `${doc.name}-${doc.width}x${doc.height}.${doc.fileExtension}`;
@@ -6,6 +7,19 @@ const
 
 module.exports = {
   createImageKey,
+  changeImageByJimp: async (doc, callback) => {
+    let
+      file = doc.file,
+      jimp = await Jimp.read(Buffer.from(file.buffer.value(), 'binary'));
+
+    jimp = callback(jimp);
+
+    let jimpBitmap = jimp.bitmap;
+    doc.width = jimpBitmap.width;
+    doc.height = jimpBitmap.height;
+    doc.file.buffer = await jimp.getBufferAsync(file.mimetype);
+    return doc;
+  },
   postHandleImage: doc => {
     let {id, name, width, height} = doc;
 

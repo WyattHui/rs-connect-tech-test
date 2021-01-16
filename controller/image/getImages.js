@@ -1,4 +1,5 @@
 const
+  mongodb = require('../../mongodb'),
   {getImages} = require('../../mongodb/image'),
   {
     common400
@@ -9,8 +10,10 @@ const
 
 module.exports = async (req, res) => {
   try {
-    let docs = await getImages();
-    return res.send(docs.map(postHandleImage));
+    return await mongodb(async client => {
+      let docs = await getImages(client);
+      return res.send(docs.map(postHandleImage));
+    });
   } catch (e) {
     return common400(res, e);
   }

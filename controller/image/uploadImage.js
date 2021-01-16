@@ -1,4 +1,5 @@
 const
+  mongodb = require('../../mongodb'),
   {uploadImage} = require('../../mongodb/image'),
   {
     common400
@@ -10,9 +11,11 @@ const
 module.exports = async (req, res) => {
   let body = req.body || {};
   try {
-    let result = await uploadImage(body.fileName, req.file);
-    res.status(201);
-    return res.send(postHandleImage(result.ops[0]));
+    return await mongodb(async client => {
+      let result = await uploadImage(client, body.fileName, req.file);
+      res.status(201);
+      return res.send(postHandleImage(result.ops[0]));
+    });
   } catch (e) {
     return common400(res, e);
   }

@@ -8,6 +8,7 @@ const
     getImages,
     getImageById,
     resizeImage,
+    rotateImage,
     uploadImage
   } = require('./controller/image'),
   router = express.Router(),
@@ -22,5 +23,6 @@ imagesRouter.delete('/:id', basicAuth, deleteImageById);
 router.use('/images', imagesRouter);
 router.post('/upload', basicAuth, upload.single('fileData'), uploadImage);
 router.get('/resize/:id', resizeImage);
+router.put('/rotate/:id', rotateImage);
 
 module.exports = router;

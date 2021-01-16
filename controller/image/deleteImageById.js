@@ -1,4 +1,5 @@
 const
+  mongodb = require('../../mongodb'),
   {deleteImageById} = require('../../mongodb/image'),
   {
     common400
@@ -9,11 +10,13 @@ const
 
 module.exports = async (req, res) => {
   try {
-    let result = await deleteImageById(req.params.id);
-    if (!result.value) {
-      return commonImage404(res);
-    }
-    return res.send({message: 'Image object deleted'});
+    return await mongodb(async client => {
+      let result = await deleteImageById(client, req.params.id);
+      if (!result.value) {
+        return commonImage404(res);
+      }
+      return res.send({message: 'Image object deleted'});
+    });
   } catch (e) {
     return common400(res, e);
   }

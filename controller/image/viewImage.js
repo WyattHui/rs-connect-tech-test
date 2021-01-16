@@ -1,4 +1,5 @@
 const
+  mongodb = require('../../mongodb'),
   {getImage} = require('../../mongodb/image'),
   {imageCache} = require('../../node-cache'),
   {
@@ -37,12 +38,14 @@ module.exports = async (req, res) => {
   }
 
   try {
-    let doc = await getImage({name, width, height, fileExtension});
-    if (!doc) {
-      return commonImage404(res);
-    }
-    let file = doc.file || {};
-    return sendImage(res, file.mimetype, file.buffer.value());
+    return await mongodb(async client => {
+      let doc = await getImage(client, {name, width, height, fileExtension});
+      if (!doc) {
+        return commonImage404(res);
+      }
+      let file = doc.file || {};
+      return sendImage(res, file.mimetype, file.buffer.value());
+    });
   } catch (e) {
     return common400(res, e);
   }

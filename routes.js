@@ -8,6 +8,7 @@ const
     getImages,
     getImageById,
     greyscaleImage,
+    invertImage,
     resizeImage,
     rotateImage,
     uploadImage
@@ -26,5 +27,6 @@ router.post('/upload', basicAuth, upload.single('fileData'), uploadImage);
 router.get('/resize/:id', resizeImage);
 router.put('/rotate/:id', rotateImage);
 router.put('/greyscale/:id', greyscaleImage);
+router.put('/invert/:id', invertImage);
 
 module.exports = router;

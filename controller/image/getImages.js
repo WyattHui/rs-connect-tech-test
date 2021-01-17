@@ -9,9 +9,18 @@ const
   } = require('./common');
 
 module.exports = async (req, res) => {
+  let
+    query = req.query || {},
+    page = query.page,
+    limit = query.limit;
+
   try {
     return await mongodb(async client => {
-      let docs = await getImages(client);
+      let docs = await getImages(
+        client,
+        page ? parseInt(page) : null,
+        limit ? parseInt(limit) : null
+      );
       return res.send(docs.map(postHandleImage));
     });
   } catch (e) {

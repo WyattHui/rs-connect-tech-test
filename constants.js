@@ -3,6 +3,7 @@ module.exports = {
     'image/png',
     'image/gif',
     'image/jpeg',
-    'image/bmp'
+    'image/bmp',
+    'image/tiff'
   ]
 };

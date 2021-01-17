@@ -1,6 +1,6 @@
 const
-  RESIZE_IMAGE_CACHE_TTL = process.env.RESIZE_IMAGE_CACHE_TTL,
-  resizeImg = require('resize-img'),
+  IMAGE_CACHE_TTL = process.env.IMAGE_CACHE_TTL,
+  mongodb = require('../../mongodb'),
   {getImageById} = require('../../mongodb/image'),
   {imageCache} = require('../../node-cache'),
   {
@@ -8,6 +8,7 @@ const
   } = require('../index'),
   {
     commonImage404,
+    changeImageByJimp,
     createImageKey,
     postHandleImage
   } = require('./common');
@@ -26,32 +27,29 @@ module.exports = async (req, res) => {
   }
 
   try {
-    let doc = await getImageById(req.params.id);
+    return await mongodb(async client => {
+      let doc = await getImageById(client, req.params.id);
 
-    if (!doc) {
-      return commonImage404(res);
-    }
+      if (!doc) {
+        return commonImage404(res);
+      }
 
-    let resizedImage = await resizeImg(
-      Buffer.from(doc.file.buffer.value(), 'binary'),
-      {width, height}
-    );
+      doc = await changeImageByJimp(doc, jimp => {
+        return jimp.resize(width, height);
+      });
 
-    doc.width = width;
-    doc.height = height;
-    doc.file.buffer = resizedImage;
+      let isCacheSuccess = imageCache.set(
+        createImageKey(doc),
+        doc,
+        IMAGE_CACHE_TTL
+      );
 
-    let isCacheSuccess = imageCache.set(
-      createImageKey(doc),
-      doc,
-      RESIZE_IMAGE_CACHE_TTL
-    );
+      if (!isCacheSuccess) {
+        return common400(res, {message: 'Cache fail'});
+      }
 
-    if (!isCacheSuccess) {
-      return common400(res, {message: 'Cache fail'});
-    }
-
-    return res.send(postHandleImage(doc));
+      return res.send(postHandleImage(doc));
+    });
   } catch (e) {
     return common400(res, e);
   }

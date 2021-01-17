@@ -1,12 +1,12 @@
 const
   getImage = require('./getImage');
 
-module.exports = id => {
+module.exports = (client, id) => {
   id = parseInt(id);
 
   if (isNaN(id)) {
     throw {message: 'ID is not a number.'};
   }
 
-  return getImage({id});
+  return getImage(client, {id});
 };

@@ -1,7 +1,6 @@
 const
-  sizeOf = require('image-size'),
+  Jimp = require('jimp'),
   {imageMimeType} = require('../../constants'),
-  mongodb = require('..'),
   {getNextSequenceValue} = require('../counters'),
   {
     dbName,
@@ -10,7 +9,7 @@ const
   getImage = require('./getImage'),
   imageSequenceId = 'imageId';
 
-module.exports = async (name, file) => {
+module.exports = async (client, name, file) => {
   file = file || {};
   if (
     !name ||
@@ -20,31 +19,26 @@ module.exports = async (name, file) => {
     throw {message: 'Some parameters are missing or invalid'};
   }
 
-  const client = mongodb();
-  await client.connect();
   const db = client.db(dbName);
 
-  try {
-    let doc = await getImage({name}, {client});
-    if (doc) {
-      throw {message: 'Name has been used'};
-    }
-
-    let
-      sequence = await getNextSequenceValue(db, imageSequenceId),
-      {width, height} = sizeOf(file.buffer || ''),
-      result = await db.collection(collectionName).insertOne({
-        id: sequence.value.sequence_value,
-        name,
-        width,
-        height,
-        fileExtension: file.originalname.match(/.+\.(.+)/)[1],
-        file
-      });
-    client.close();
-    return result;
-  } catch (e) {
-    client.close();
-    throw e;
+  let doc = await getImage(client, {name}, {client});
+  if (doc) {
+    throw {message: 'Name has been used'};
   }
+
+  let
+    sequence = await getNextSequenceValue(db, imageSequenceId),
+    jimp = await Jimp.read(Buffer.from(file.buffer, 'binary')),
+    jimpBitmap = jimp.bitmap;
+
+  file.buffer = await jimp.getBufferAsync(file.mimetype);
+
+  return db.collection(collectionName).insertOne({
+    id: sequence.value.sequence_value,
+    name,
+    width: jimpBitmap.width,
+    height: jimpBitmap.height,
+    fileExtension: file.originalname.match(/.+\.(.+)/)[1],
+    file
+  });
 };

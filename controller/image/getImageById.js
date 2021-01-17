@@ -1,4 +1,5 @@
 const
+  mongodb = require('../../mongodb'),
   {getImageById} = require('../../mongodb/image'),
   {
     common400
@@ -10,11 +11,13 @@ const
 
 module.exports = async (req, res) => {
   try {
-    let doc = await getImageById(req.params.id);
-    if (!doc) {
-      return commonImage404(res);
-    }
-    return res.send(postHandleImage(doc));
+    return await mongodb(async client => {
+      let doc = await getImageById(client, req.params.id);
+      if (!doc) {
+        return commonImage404(res);
+      }
+      return res.send(postHandleImage(doc));
+    });
   } catch (e) {
     return common400(res, e);
   }

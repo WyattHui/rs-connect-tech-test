@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "docker build . -t rs-connect-tech-test",
+    "docker-login-aws": "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 267585271655.dkr.ecr.eu-west-2.amazonaws.com",
+    "build": "docker build -t rs-connect-tech-test .",
+    "build-prod": "npm run build -- --build-arg NODE_ENV=production",
+    "tag": "docker tag rs-connect-tech-test:latest 267585271655.dkr.ecr.eu-west-2.amazonaws.com/rs-connect-tech-test:latest",
+    "push": "docker push 267585271655.dkr.ecr.eu-west-2.amazonaws.com/rs-connect-tech-test:latest",
+    "aws-ecs-update-service": "aws ecs update-service --cluster arn:aws:ecs:eu-west-2:267585271655:cluster/rs-connect-tech-test-cluster --service arn:aws:ecs:eu-west-2:267585271655:service/rs-connect-tech-test-cluster/rs-connect-tech-test-service --force-new-deployment --region eu-west-2",
     "start": "docker run -p 8080:8080 -it rs-connect-tech-test",
     "dev": "npm run build & npm run start"
   },

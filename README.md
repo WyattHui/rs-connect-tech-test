@@ -5,53 +5,47 @@
 The application should provide endpoints for creating image objects in a datastore, managing the objects in the datastore and providing new (resized) renditions of existing image objects already present in the datastore.
 
 ### Dependencies
+* AWS CLI (https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 * Terraform (https://www.terraform.io)
 * Docker (https://www.docker.com)
 * Node.js (https://nodejs.org)
 ### Development
 * Install npm packages
 
-  ```
-  npm install
-  ```
+    ```
+    npm install
+    ```
 
 * Build and run the Docker image
 
-  ```
-  npm run build
-  npm run start
-  ```
+    ```
+    npm run build
+    npm run start
+    ```
 
 ### Deployment instructions
 * For version update, please edit the version number in
   * package.json
 
-* Run Terraform
-
-  ```
-  terraform init
-  terraform apply
-  ```
-
 * Retrieve an authentication token and authenticate your Docker client to your registry
 
-  ```
-  npm run docker-login-aws
-  ```
+    ```
+    npm run docker-login-aws
+    ```
 
 * Build, tag and push the Docker image
 
-  ```
-  npm run build-prod
-  npm run tag
-  npm run push
-  ```
+    ```
+    npm run build-prod
+    npm run tag
+    npm run push
+    ```
 
 * AWS ECS Update Service
 
-  ```
-  npm run aws-ecs-update-service
-  ```
+    ```
+    npm run aws-ecs-update-service
+    ```
 
 ### Team contacts
 * Wyatt Hui (wyatt.hui.1104@gmail.com)

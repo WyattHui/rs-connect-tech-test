@@ -1,5 +1,6 @@
 const
   express = require('express'),
+  pjson = require('./package.json'),
   {basicAuth} = require('./middleware/authenticate'),
   multer = require('multer'),
   upload = multer(),
@@ -18,6 +19,9 @@ const
 
 router.get('/ping', (req, res) => {
   res.send();
+});
+router.get('/version', (req, res) => {
+  res.send(pjson.version);
 });
 imagesRouter.get('/', getImages);
 imagesRouter.get('/:id', getImageById);

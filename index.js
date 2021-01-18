@@ -1,4 +1,19 @@
-require('dotenv').config();
+const
+  path = require('path'),
+  NODE_ENV = process.env.NODE_ENV;
+let envPath;
+
+switch (NODE_ENV) {
+  case 'production':
+    envPath = '.env.production';
+    break;
+  default:
+    envPath = '.env';
+}
+
+require('dotenv').config({
+  path: path.resolve(process.cwd(), envPath)
+});
 
 const
   express = require('express'),

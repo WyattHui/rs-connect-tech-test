@@ -1,6 +1,6 @@
 const
   Jimp = require('jimp'),
-  DOMAIN = process.env.DOMAIN,
+  HOST = process.env.HOST,
   createImageKey = doc => {
     return `${doc.name}-${doc.width}x${doc.height}.${doc.fileExtension}`;
   };
@@ -25,7 +25,7 @@ module.exports = {
 
     return {
       id, name, width, height,
-      url: `http://${DOMAIN}/${createImageKey(doc)}`
+      url: `http://${HOST}/${createImageKey(doc)}`
     };
   },
   commonImage404: res => {

@@ -11,17 +11,24 @@ const
 module.exports = async (req, res) => {
   let
     query = req.query || {},
-    page = query.page,
-    limit = query.limit;
+    page = query.page ? parseInt(query.page) : 0,
+    limit = query.limit ? parseInt(query.limit) : 10;
 
   try {
     return await mongodb(async client => {
-      let docs = await getImages(
-        client,
-        page ? parseInt(page) : null,
-        limit ? parseInt(limit) : null
-      );
-      return res.send(docs.map(postHandleImage));
+      let result = await getImages(client, page, limit);
+      result = result[0] || {};
+      let
+        items = result.items || [],
+        counts = result.counts || [],
+        countItem = counts[0] || {};
+
+      return res.send({
+        items: items.map(postHandleImage),
+        page,
+        limit,
+        totalCount: countItem.count
+      });
     });
   } catch (e) {
     return common400(res, e);

@@ -12,7 +12,7 @@ module.exports = {
     }
 
     const
-      base64Credentials =  req.headers.authorization.split(' ')[1],
+      base64Credentials = req.headers.authorization.split(' ')[1],
       credentials = Buffer.from(base64Credentials, 'base64').toString('ascii'),
       [username, password] = credentials.split(':'),
       user = authenticate({username, password});

@@ -21,7 +21,7 @@ module.exports = async (client, name, file) => {
 
   const db = client.db(dbName);
 
-  let doc = await getImage(client, {name}, {client});
+  let doc = await getImage(client, {name});
   if (doc) {
     throw {message: 'Name has been used'};
   }
